@@ -1,0 +1,222 @@
+﻿<!DOCTYPE>
+<html>
+<head>
+<title>有序表的合并</title>
+<script>
+/* 
+ 题目：有序列表的合并。
+ A = 3，5，8，11
+ B = 2，6，8，9，11，15，20
+ 合并：2，3，5，6，8，8，9，11，11，15，20
+ 
+ 我根据C算法的思想进行编写JS代码（采用两种不同的数据结构）。
+ 
+ 下面是C的源码及其算法思想。
+
+ void MergeList_L(LinkList &LA, LinkList &LB, LinkList &LC) //算法2.17 链式有序表的合并
+{
+	//已知单链表LA和LB的元素按值非递减排列
+	//归并LA和LB得到新的单链表LC，LC的元素也按值非递减排列
+	LinkList pa, pb, pc;
+	pa = LA->next;
+	pb = LB->next; //pa和pb的初值分别指向两个表的第一个结点
+	LC = LA; //用LA的头结点作为LC的头结点
+	pc = LC; //pc的初值指向LC的头结点
+	while (pa && pb) //两个表都非空
+	{
+		if (pa->data <= pb->data) //依次"摘取"两表中值较小的结点插入到LC表的最后
+		{
+			pc->next = pa; //将pa所指结点链接到pc所指结点之后
+			pc = pa;
+			pa = pa->next;
+		} else {
+			pc->next = pb; //将pb所指结点链接到pc所指结点之后
+			pc = pb;
+			pb = pb->next;
+		}
+	}
+	pc->next = pa ? pa : pb; //插入非空表的剩余段
+	delete LB; //释放LB的头结点
+} //MergeList_L()
+
+*/
+
+
+/*--------------------------下面是两种不同数据结构实现的JS代码-----------------------------------*/
+
+window.onload = function()
+{
+   var result = document.getElementById("result");
+   /*
+    //---------第一种：采用数组------------
+   var A = [3,5,8,11];
+   var B = [2,6,8,9,11,15,20];
+
+    //测试数据
+   //var A = [2,6,8,9,11,15,20];
+   //var B = [3,5,8,11];
+    
+	document.getElementById("initial").innerHTML = "A = " + A + "<br/>"+"B = " + B; 
+	
+	var i=0,j=0;
+
+    while(i<A.length&&j<B.length)
+   {
+       //若B[j]中有元素小于A[i],则把B[j]排在A[i]前面
+	   if(A[i]>=B[j])
+	   {
+		   A.splice(i,0,B[j]);
+		   j++;
+		   i++;
+	   }
+	   else
+	   {
+		   i++;
+	   }
+    }
+
+	//若B有剩下的元素没有合并完，则全部排在A的元素后面
+   if(j<B.length)
+  {
+	   while(j<B.length)
+	   {
+		  A.push(B[j]);
+	      j++;
+	   }
+	   
+	   result.innerHTML = "合并后: " + A;
+  }
+  else
+  {
+	   result.innerHTML = "合并后: " + A;
+  }
+  */
+   
+  //---------第二种：采用单链表------------
+   //创建单链表
+   function LinkList()
+   {
+      var Node = function(elem)
+	  {
+	    this.elem = elem;
+		this.next = null;
+	  }
+	  
+	  //创建头节点
+	  var head = new Node("");
+	  
+	  /*--增加节点--*/
+	  this.appendNode = function(elem)
+	  {
+	     var node = new Node(elem);
+		 var current;
+		 
+		 //第一个节点
+		 if(head.next==null)
+		 {
+		   head.next = node;
+		 }
+		 else
+		 {
+		    //若不是第一个节点
+			current = head;
+			
+			//循环链表，直到最后一项
+			while(current.next)
+			{
+			   current = current.next;
+			}
+			
+			//把节点接在链表最后的位置
+			current.next = node;
+		 }
+
+	  };
+     /*--遍历节点,输出一个字符串--*/	  
+	 this.toString = function()
+	 {
+	    var current = head;
+		var string = "";
+		
+		while(current)
+		{
+		  string += current.elem + " ";
+		  current = current.next;
+		}
+		
+		return string;
+	 };
+	 
+	 //获取头指针
+	  this.getHead = function()
+	  {
+	    return head;
+	  };
+   }
+   
+   
+   //创建链表A
+   var A = new LinkList();
+   A.appendNode(3);
+   A.appendNode(5);
+   A.appendNode(8);
+   A.appendNode(11);
+   
+   //创建链表B
+   var B = new LinkList();
+   B.appendNode(2);
+   B.appendNode(6);
+   B.appendNode(8);
+   B.appendNode(9);
+   B.appendNode(11);
+   B.appendNode(15);
+   B.appendNode(20);
+   
+   //输出初始链表
+   document.getElementById("initial").innerHTML = "A: "+A.toString()+"<br/>"+"B: "+B.toString();
+   
+   //获取头指针
+   var AHead = A.getHead();
+   var BHead = B.getHead();
+   
+   var APointer = AHead.next;
+   var BPointer = BHead.next;
+   var CPointer = AHead;
+   
+   while(APointer&&BPointer)
+   {
+      if(APointer.elem>=BPointer.elem)//摘取BPointer指向的节点
+	  {
+	     CPointer.next = BPointer;
+		 CPointer = BPointer;
+		 BPointer = BPointer.next;
+	  }
+	  else                            //摘取APointer指向的节点
+	  {
+	     CPointer.next = APointer;
+		 CPointer = APointer;
+		 APointer = APointer.next;
+	  }
+   }
+   //将非空表剩余节点插到CPointer所指节点的后面
+   CPointer.next = APointer ? APointer:BPointer;
+   delete BHead;
+   
+   //由于一开始CPointer就指向A头节点，所以把所有的节点都链接到了A链表
+   result.innerHTML = "合并后: "+A.toString();
+   
+  
+  
+  /*
+  
+  /----------------第三种、其实如果单纯为了合并有序表，不需要写那么多JS代码，一句代码既可以。
+  
+  result.innerHTML = (A.concat(B)).sort(function(a,b){return a-b;});
+  */
+};
+</script>
+<body>
+<div id="initial"></div>
+<div id="result"></div>
+</body>
+</html>
