@@ -1,0 +1,38 @@
+﻿<!DOCTYPE>
+<html>
+<head>
+<style>
+
+</style>
+<title>无标题文档</title>
+<script>
+window.onload = function()
+{
+
+  var str = document.getElementById("txt");
+  var btn = document.getElementById("btn1");
+  
+  btn.onclick = function()
+  {  	 
+	 var font = 0;
+	 var rear = str.value.length-1;
+
+
+	 for(font,rear;font<=rear;font++,rear--)
+	 {
+	    if(str.value[font]!=str.value[rear]){alert("false");break;}
+	 }
+	 
+	 if(font>rear)
+	 {
+	    alert("true");
+	 }
+  }
+  
+};
+</script>
+<body>
+<h3>检查是否为回文数</h3>
+<input type="text" id="txt"/><input type="button" id="btn1" value="提交"/>
+</body>
+</html>
